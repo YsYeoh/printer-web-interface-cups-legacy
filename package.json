@@ -1,0 +1,36 @@
+{
+  "name": "printer-web-interface-cups-legacy",
+  "version": "1.0.0",
+  "description": "Modern web interface for managing and printing documents through CUPS",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "cups",
+    "printing",
+    "web-interface"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "express-rate-limit": "^3.0.0",
+    "bcryptjs": "^2.4.3",
+    "multer": "^1.4.2",
+    "body-parser": "^1.18.3",
+    "jsonfile": "^4.0.0",
+    "uuid": "^3.4.0",
+    "mime-types": "^2.1.24",
+    "ejs": "^2.6.1",
+    "csurf": "^1.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.4"
+  },
+  "engines": {
+    "node": "10.x"
+  }
+}

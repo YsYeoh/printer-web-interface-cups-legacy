@@ -1,0 +1,21 @@
+{
+  "maxFileSize": 52428800,
+  "sessionTimeout": 86400000,
+  "uploadCleanupHours": 24,
+  "port": 3000,
+  "defaultPrintSettings": {
+    "copies": 1,
+    "colorMode": "Color",
+    "paperSize": "A4",
+    "orientation": "Portrait",
+    "scaling": 100,
+    "quality": "Normal",
+    "margins": {
+      "top": 0.5,
+      "bottom": 0.5,
+      "left": 0.5,
+      "right": 0.5
+    }
+  }
+}
+

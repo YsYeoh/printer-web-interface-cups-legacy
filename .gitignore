@@ -1,0 +1,9 @@
+node_modules/
+uploads/
+previews/
+*.log
+.DS_Store
+.env
+config/users.json
+npm-debug.log*
+

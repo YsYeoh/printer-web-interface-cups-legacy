@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PDF Viewer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        #pdf-container {
+            width: 100%;
+            height: 100vh;
+            overflow: auto;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="pdf-container"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const pdfUrl = urlParams.get('file') || '/api/preview/' + window.location.pathname.split('/').pop();
+        
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+        
+        pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
+            const container = document.getElementById('pdf-container');
+            
+            for (let pageNum = 1; pageNum <= Math.min(pdf.numPages, 3); pageNum++) {
+                pdf.getPage(pageNum).then(function(page) {
+                    const viewport = page.getViewport({ scale: 1.5 });
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    
+                    page.render(renderContext).promise.then(function() {
+                        container.appendChild(canvas);
+                    });
+                });
+            }
+        }).catch(function(error) {
+            document.getElementById('pdf-container').innerHTML = '<p style="text-align: center; padding: 20px;">Error loading PDF: ' + error.message + '</p>';
+        });
+    </script>
+</body>
+</html>
+

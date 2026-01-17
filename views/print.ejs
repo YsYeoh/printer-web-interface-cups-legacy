@@ -1,0 +1,259 @@
+<%- include('layouts/main-start') %>
+<style>
+.print-page-fullscreen {
+    position: fixed;
+    top: 56px; /* Navbar height */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    background-color: #f5f5f5;
+    padding: 15px;
+}
+
+.print-layout {
+    display: flex;
+    height: 100%;
+    gap: 15px;
+}
+
+.print-left {
+    flex: 0 0 45%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    min-width: 0;
+}
+
+.print-right {
+    flex: 0 0 55%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.print-page-fullscreen .card {
+    margin-bottom: 15px;
+    height: auto;
+}
+
+.print-page-fullscreen .card:last-child {
+    margin-bottom: 0;
+}
+
+.print-page-fullscreen .card-body {
+    padding: 15px;
+}
+
+.print-page-fullscreen .upload-zone {
+    padding: 20px;
+    min-height: 100px;
+}
+
+.print-page-fullscreen .preview-container {
+    height: 100%;
+    overflow: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+}
+
+.print-page-fullscreen .preview-container img,
+.print-page-fullscreen .preview-container iframe {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+}
+
+.print-page-fullscreen .form-group {
+    margin-bottom: 15px;
+}
+
+.print-page-fullscreen .form-row {
+    margin-left: -7.5px;
+    margin-right: -7.5px;
+}
+
+.print-page-fullscreen .form-row > [class*="col-"] {
+    padding-left: 7.5px;
+    padding-right: 7.5px;
+}
+
+.print-settings-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.print-settings-card .card-body {
+    flex: 1;
+    overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+    .print-layout {
+        flex-direction: column;
+    }
+    
+    .print-left,
+    .print-right {
+        flex: 1 1 auto;
+    }
+    
+    .print-right {
+        min-height: 400px;
+    }
+}
+</style>
+
+<div class="print-page-fullscreen">
+    <div class="print-layout">
+        <div class="print-left">
+            <!-- File Upload Section -->
+            <div class="card">
+                <div class="card-header py-2">
+                    <h5 class="mb-0">Upload File</h5>
+                </div>
+                <div class="card-body">
+                    <div id="uploadZone" class="upload-zone">
+                        <input type="file" id="fileInput" style="display: none;" accept=".pdf,.jpg,.jpeg,.png,.gif,.ps,.eps">
+                        <p id="fileInfo" class="mb-1">Drag and drop a file here or click to select</p>
+                        <p class="text-muted small mb-0">Supported: PDF, JPEG, PNG, GIF, PostScript (Max 50MB)</p>
+                    </div>
+                    <div id="selectedFileInfo" class="alert alert-info mt-2 py-2" style="display: none;">
+                        <strong>File:</strong> <span id="fileName"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Print Settings Section -->
+            <div class="card print-settings-card">
+                <div class="card-header py-2">
+                    <h5 class="mb-0">Print Settings</h5>
+                </div>
+                <div class="card-body">
+                    <form id="printForm">
+                        <div class="form-group mb-2">
+                            <label for="printerName" class="mb-1">Printer</label>
+                            <select class="form-control form-control-sm" id="printerSelect" name="printerName" required>
+                                <option value="">Loading printers...</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="col-6">
+                                <div class="form-group mb-2">
+                                    <label for="copies" class="mb-1">Copies</label>
+                                    <input type="number" class="form-control form-control-sm" id="copies" name="copies" min="1" max="99" value="1" required>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group mb-2">
+                                    <label for="colorMode" class="mb-1">Color Mode</label>
+                                    <select class="form-control form-control-sm" id="colorMode" name="colorMode" required>
+                                        <option value="Color">Color</option>
+                                        <option value="Gray">Black & White</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="col-6">
+                                <div class="form-group mb-2">
+                                    <label for="paperSize" class="mb-1">Paper Size</label>
+                                    <select class="form-control form-control-sm" id="paperSize" name="paperSize" required>
+                                        <option value="A4">A4</option>
+                                        <option value="Letter">Letter</option>
+                                        <option value="Legal">Legal</option>
+                                        <option value="A3">A3</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group mb-2">
+                                    <label for="orientation" class="mb-1">Orientation</label>
+                                    <select class="form-control form-control-sm" id="orientation" name="orientation" required>
+                                        <option value="Portrait">Portrait</option>
+                                        <option value="Landscape">Landscape</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="col-6">
+                                <div class="form-group mb-2">
+                                    <label for="scaling" class="mb-1">Scaling (%)</label>
+                                    <input type="range" class="form-control-range" id="scaling" name="scaling" min="25" max="200" value="100" step="5">
+                                    <small class="form-text text-muted"><span id="scalingValue">100</span>%</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group mb-2">
+                                    <label for="quality" class="mb-1">Print Quality</label>
+                                    <select class="form-control form-control-sm" id="quality" name="quality" required>
+                                        <option value="Draft">Draft</option>
+                                        <option value="Normal" selected>Normal</option>
+                                        <option value="High">High</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-2">
+                            <label class="mb-1">Margins (inches)</label>
+                            <div class="form-row">
+                                <div class="col-3">
+                                    <label class="small">Top</label>
+                                    <input type="number" class="form-control form-control-sm" id="marginTop" name="marginTop" step="0.1" value="0.5" min="0">
+                                </div>
+                                <div class="col-3">
+                                    <label class="small">Bottom</label>
+                                    <input type="number" class="form-control form-control-sm" id="marginBottom" name="marginBottom" step="0.1" value="0.5" min="0">
+                                </div>
+                                <div class="col-3">
+                                    <label class="small">Left</label>
+                                    <input type="number" class="form-control form-control-sm" id="marginLeft" name="marginLeft" step="0.1" value="0.5" min="0">
+                                </div>
+                                <div class="col-3">
+                                    <label class="small">Right</label>
+                                    <input type="number" class="form-control form-control-sm" id="marginRight" name="marginRight" step="0.1" value="0.5" min="0">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-block btn-sm" id="printButton" disabled>Print</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="print-right">
+            <div class="card h-100">
+                <div class="card-header py-2">
+                    <h5 class="mb-0">Preview</h5>
+                </div>
+                <div class="card-body p-2">
+                    <div id="filePreview" class="preview-container">
+                        <p class="text-muted">No file selected</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Update scaling value display
+document.getElementById('scaling').addEventListener('input', (e) => {
+    document.getElementById('scalingValue').textContent = e.target.value;
+});
+</script>
+<script src="/js/print.js"></script>
+<%- include('layouts/main-end') %>
+
