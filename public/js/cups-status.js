@@ -104,3 +104,4 @@ window.addEventListener('beforeunload', () => {
   stopCUPSStatusPolling();
 });
 
+

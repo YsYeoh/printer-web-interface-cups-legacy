@@ -18,7 +18,10 @@ router.post('/', requireAuth, async (req, res) => {
       orientation,
       scaling,
       quality,
-      margins
+      margins,
+      duplex,
+      pageRanges,
+      collate
     } = req.body;
     
     // Validate required fields
@@ -61,7 +64,10 @@ router.post('/', requireAuth, async (req, res) => {
       orientation: orientation || config.defaultPrintSettings.orientation,
       scaling: parseInt(scaling) || config.defaultPrintSettings.scaling,
       quality: quality || config.defaultPrintSettings.quality,
-      margins: margins || config.defaultPrintSettings.margins
+      margins: margins || config.defaultPrintSettings.margins,
+      duplex: duplex || null,
+      pageRanges: pageRanges || null,
+      collate: collate === true || collate === 'true'
     };
     
     // Validate options
@@ -71,6 +77,19 @@ router.post('/', requireAuth, async (req, res) => {
     
     if (printOptions.scaling < 25 || printOptions.scaling > 200) {
       return res.status(400).json({ error: 'Scaling must be between 25% and 200%' });
+    }
+    
+    // Validate page ranges format (e.g., "1-5,8,10-12")
+    if (printOptions.pageRanges) {
+      const pageRangePattern = /^(\d+(-\d+)?)(,\d+(-\d+)?)*$/;
+      if (!pageRangePattern.test(printOptions.pageRanges)) {
+        return res.status(400).json({ error: 'Invalid page range format. Use format like "1-5,8,10-12"' });
+      }
+    }
+    
+    // Validate collate (only makes sense for multiple copies)
+    if (printOptions.collate && printOptions.copies <= 1) {
+      return res.status(400).json({ error: 'Collate option only applies to multiple copies' });
     }
     
     // Submit print job

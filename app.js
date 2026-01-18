@@ -56,6 +56,7 @@ const printRoutes = require('./routes/print');
 const printersRoutes = require('./routes/printers');
 const adminRoutes = require('./routes/admin');
 const previewRoutes = require('./routes/preview');
+const jobsRoutes = require('./routes/jobs');
 
 // Public routes
 app.post('/api/login', authLimiter, authRoutes.login);
@@ -67,6 +68,7 @@ app.use('/api/print', printRoutes);
 app.use('/api/printers', printersRoutes);
 app.use('/api/preview', previewRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/jobs', jobsRoutes);
 
 // Page routes
 app.get('/', (req, res) => {
@@ -100,6 +102,20 @@ app.get('/print', require('./middleware/auth').requireAuth, (req, res) => {
 
 app.get('/admin/users', require('./middleware/auth').requireAuth, require('./middleware/rbac').requireAdmin, (req, res) => {
   res.render('admin/users', { 
+    user: req.session.user,
+    csrfToken: req.csrfToken() 
+  });
+});
+
+app.get('/queue', require('./middleware/auth').requireAuth, (req, res) => {
+  res.render('queue', { 
+    user: req.session.user,
+    csrfToken: req.csrfToken() 
+  });
+});
+
+app.get('/printers', require('./middleware/auth').requireAuth, (req, res) => {
+  res.render('printers', { 
     user: req.session.user,
     csrfToken: req.csrfToken() 
   });

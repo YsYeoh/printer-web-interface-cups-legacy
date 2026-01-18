@@ -68,6 +68,7 @@
     height: auto;
 }
 
+
 .print-page-fullscreen .form-group {
     margin-bottom: 15px;
 }
@@ -224,6 +225,35 @@
                                     <label class="small">Right</label>
                                     <input type="number" class="form-control form-control-sm" id="marginRight" name="marginRight" step="0.1" value="0.5" min="0">
                                 </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="col-6">
+                                <div class="form-group mb-2">
+                                    <label for="duplex" class="mb-1">Duplex</label>
+                                    <select class="form-control form-control-sm" id="duplex" name="duplex">
+                                        <option value="">None</option>
+                                        <option value="Long-edge">Long-edge</option>
+                                        <option value="Short-edge">Short-edge</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group mb-2">
+                                    <label for="pageRanges" class="mb-1">Page Range</label>
+                                    <input type="text" class="form-control form-control-sm" id="pageRanges" name="pageRanges" placeholder="e.g., 1-5,8,10-12">
+                                    <small class="form-text text-muted">Leave empty for all pages</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="collate" name="collate">
+                                <label class="form-check-label" for="collate">
+                                    Collate (for multiple copies)
+                                </label>
                             </div>
                         </div>
                         

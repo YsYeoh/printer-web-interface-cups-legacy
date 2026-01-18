@@ -191,6 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (response.ok && result.options) {
         populatePaperSizes(result.options.paperSizes);
         populateColorModes(result.options.colorModes);
+        populateDuplexModes(result.options.duplexModes || []);
       }
     } catch (error) {
       console.error('Error loading printer options:', error);
@@ -233,6 +234,39 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
+  // Populate duplex modes
+  function populateDuplexModes(modes) {
+    const duplexSelect = document.getElementById('duplex');
+    if (!duplexSelect) return;
+    
+    const currentValue = duplexSelect.value;
+    duplexSelect.innerHTML = '<option value="">None</option>';
+    
+    // Map CUPS duplex values to display values
+    const duplexMap = {
+      'two-sided-long-edge': 'Long-edge',
+      'two-sided-short-edge': 'Short-edge',
+      'DuplexNoTumble': 'Long-edge',
+      'DuplexTumble': 'Short-edge'
+    };
+    
+    const addedModes = new Set();
+    modes.forEach(mode => {
+      const displayMode = duplexMap[mode] || mode;
+      if (!addedModes.has(displayMode) && mode !== 'None' && mode !== '*None') {
+        const option = document.createElement('option');
+        option.value = displayMode;
+        option.textContent = displayMode;
+        if (displayMode === currentValue) {
+          option.selected = true;
+        }
+        duplexSelect.appendChild(option);
+        addedModes.add(displayMode);
+      }
+    });
+  }
+  
+  
   // Load default settings
   function loadDefaultSettings() {
     document.getElementById('copies').value = '1';
@@ -270,8 +304,30 @@ document.addEventListener('DOMContentLoaded', () => {
         bottom: formData.get('marginBottom'),
         left: formData.get('marginLeft'),
         right: formData.get('marginRight')
-      }
+      },
+      duplex: formData.get('duplex') || null,
+      pageRanges: formData.get('pageRanges') || null,
+      collate: formData.get('collate') === 'on'
     };
+    
+    // Validate page ranges format
+    if (data.pageRanges && data.pageRanges.trim()) {
+      const pageRangePattern = /^(\d+(-\d+)?)(,\d+(-\d+)?)*$/;
+      if (!pageRangePattern.test(data.pageRanges.trim())) {
+        showToast('Invalid page range format. Use format like "1-5,8,10-12"', 'error');
+        submitButton.disabled = false;
+        submitButton.innerHTML = 'Print';
+        return;
+      }
+    }
+    
+    // Validate collate (only for multiple copies)
+    if (data.collate && parseInt(data.copies) <= 1) {
+      showToast('Collate option only applies to multiple copies', 'error');
+      submitButton.disabled = false;
+      submitButton.innerHTML = 'Print';
+      return;
+    }
     
     const submitButton = printForm.querySelector('button[type="submit"]');
     submitButton.disabled = true;
@@ -315,6 +371,14 @@ document.addEventListener('DOMContentLoaded', () => {
       submitButton.innerHTML = 'Print';
     }
   });
+  
+  // Update scaling value display
+  const scalingSlider = document.getElementById('scaling');
+  if (scalingSlider) {
+    scalingSlider.addEventListener('input', (e) => {
+      document.getElementById('scalingValue').textContent = e.target.value;
+    });
+  }
   
   // Load printers on page load
   loadPrinters();

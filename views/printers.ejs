@@ -1,0 +1,67 @@
+<%- include('layouts/main-start') %>
+<style>
+.printers-page {
+    padding: 20px 0;
+}
+
+.printer-card {
+    margin-bottom: 20px;
+}
+
+.printer-status-badge {
+    font-size: 0.9em;
+    padding: 0.3em 0.6em;
+}
+
+.printer-details {
+    margin-top: 15px;
+}
+
+.printer-details dt {
+    font-weight: 600;
+    width: 150px;
+}
+
+.printer-details dd {
+    margin-left: 170px;
+}
+
+.capabilities-list {
+    list-style: none;
+    padding: 0;
+}
+
+.capabilities-list li {
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.capabilities-list li:last-child {
+    border-bottom: none;
+}
+</style>
+
+<div class="container-fluid printers-page">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Printers</h1>
+                <a href="/dashboard" class="btn btn-outline-primary">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div id="printersContainer">
+                <div class="text-center">
+                    <p>Loading printers...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/printers.js"></script>
+<%- include('layouts/main-end') %>
+
